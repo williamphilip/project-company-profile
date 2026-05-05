@@ -63,15 +63,15 @@ $result = $conn->query($sql);
                                 echo "<td class='py-5 px-6'>
                                         <div class='font-bold text-gray-800'>".htmlspecialchars($row['nama_pasien'])."</div>
                                         <div class='text-xs text-gray-400'>".htmlspecialchars($row['email'])."</div>
-                                      </td>";
+                                    </td>";
                                 echo "<td class='py-5 px-6'>".htmlspecialchars($row['no_hp']);"</td>";      
                                 echo "<td class='py-5 px-6'>
                                         <span class='bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase'>".htmlspecialchars($row['kategori'])."</span>
-                                      </td>";
+                                    </td>";
                                 echo "<td class='py-5 px-6 text-sm text-gray-600 leading-relaxed max-w-xs'>".htmlspecialchars($row['pesan'])."</td>";
                                 echo "<td class='py-5 px-6 text-center'>
                                         <button class='text-teal-500 hover:text-teal-700 text-sm font-bold'><i class='fas fa-check-circle'></i> Selesai</button>
-                                      </td>";
+                                    </td>";
                                 echo "</tr>";
                             }
                         } else {
