@@ -407,106 +407,89 @@ $conn->close();
       </div>
     </section>
 
-    <section id="dokter" class="py-24 bg-pink-50">
+    <section id="dokter" class="py-24 bg-pink-50 scroll-mt-20">
       <div class="container mx-auto px-6">
         <div class="flex flex-col md:flex-row justify-between items-end mb-12">
           <div>
-            <h2 class="text-3xl font-bold text-gray-900">
+            <span class="text-pink-600 font-bold uppercase tracking-wider text-xs bg-pink-100 px-3 py-1 rounded-full">Jadwal Praktik</span>
+            <h2 class="text-3xl font-bold text-gray-900 mt-3">
               Dokter Spesialis Kami
             </h2>
             <p class="text-gray-500 mt-2">
-              Tim ahli yang siap mendampingi setiap langkah kesehatan keluarga
-              Anda.
+              Tim dokter ahli dan berpengalaman yang siap melayani Anda dan buah hati.
             </p>
           </div>
           <a
-            href="#"
-            class="text-pink-600 font-bold hover:underline mt-4 md:mt-0"
-            >Lihat Semua Dokter <i class="fas fa-arrow-right ml-2"></i
+            href="#bookingModal" onclick="openModal()"
+            class="text-pink-600 font-bold hover:underline mt-4 md:mt-0 flex items-center"
+            >Lihat Dokter Selengkapnya <i class="fas fa-arrow-right ml-2"></i
           ></a>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div
-            class="bg-white p-4 rounded-3xl shadow-sm hover:shadow-xl transition"
-          >
-            <img
-              src="assets/img/prof_nusrat.png"
-              alt="Dokter"
-              class="w-full h-64 object-cover rounded-2xl mb-4"
-            />
-            <h5 class="text-lg font-bold text-gray-900">
-              Prof.Dr.dr. Nusratuddin Abdullah, Sp.OG.,Subsp. FER., MARS
-            </h5>
-            <p class="text-pink-600 text-sm font-semibold">
-              Spesialis Kebidanan & Kandungan
-            </p>
-            <div
-              class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500"
-            >
-              <span
-                ><i class="far fa-calendar-alt mr-1"></i> Sen, Rab, Jum</span
-              >
-              <span class="bg-green-100 text-green-700 px-2 py-1 rounded"
-                >Tersedia</span
-              >
+        <!-- Grid Jadwal Dokter dari Database -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <?php
+          // Sertakan file koneksi (pastikan koneksi.php berada di folder yang sama)
+          include 'koneksi.php';
+
+          // Ambil data dari tabel jadwal_dokter
+          $sql_dokter = "SELECT * FROM jadwal_dokter ORDER BY nama_dokter ASC";
+          $result_dokter = $conn->query($sql_dokter);
+
+          if ($result_dokter && $result_dokter->num_rows > 0) {
+              while($row = $result_dokter->fetch_assoc()) {
+                  // Tentukan warna badge status
+                  $badge_color = ($row['status'] == 'Tersedia') ? 'bg-teal-500' : 'bg-orange-500';
+          ?>
+
+            <!-- Card Dokter Dynamic -->
+            <div class="bg-white p-6 rounded-3xl shadow-md hover:shadow-xl transition border border-pink-100 flex flex-col justify-between">
+              <div>
+                <div class="relative mb-6">
+                  <img
+                    src="<?= htmlspecialchars($row['foto']); ?>"
+                    alt="<?= htmlspecialchars($row['nama_dokter']); ?>"
+                    class="w-full h-64 object-cover rounded-2xl bg-gray-100"
+                    onerror="this.src='assets/img/default-doctor.png'"
+                  />
+                  <span class="absolute top-3 right-3 <?= $badge_color; ?> text-white text-xs px-3 py-1 rounded-full font-bold shadow">
+                    <?= htmlspecialchars($row['status']); ?>
+                  </span>
+                </div>
+                
+                <!-- Nama Poliklinik -->
+                <span class="inline-block bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-lg mb-2">
+                  <i class="fas fa-clinic-medical mr-1"></i> <?= htmlspecialchars($row['poliklinik']); ?>
+                </span>
+
+                <h5 class="text-lg font-bold text-gray-900 leading-snug">
+                  <?= htmlspecialchars($row['nama_dokter']); ?>
+                </h5>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-gray-100 space-y-2">
+                <div class="flex items-center text-xs text-gray-600 font-semibold">
+                  <i class="far fa-calendar-alt text-pink-500 w-5"></i>
+                  <span><?= htmlspecialchars($row['hari_praktik']); ?></span>
+                </div>
+                <div class="flex items-center text-xs text-gray-600 font-semibold">
+                  <i class="far fa-clock text-pink-500 w-5"></i>
+                  <span><?= htmlspecialchars($row['jam_praktik']); ?></span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div
-            class="bg-white p-4 rounded-3xl shadow-sm hover:shadow-xl transition"
-          >
-            <img
-              src="assets/img/dr_ferry.png"
-              alt="Dokter"
-              class="w-full h-64 object-cover rounded-2xl mb-4"
-            />
-            <h5 class="text-lg font-bold text-gray-900">
-              dr. Ferry Wijaya, Sp.OG ., Subsp., FER
-            </h5>
-            <p class="text-pink-500 text-sm font-semibold">
-              Spesialis Kebidanan & Kandungan
-            </p>
-            <div
-              class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500"
-            >
-              <span
-                ><i class="far fa-calendar-alt mr-1"></i> Sel, Kam, Sab</span
-              >
-              <span class="bg-green-100 text-green-700 px-2 py-1 rounded"
-                >Tersedia</span
-              >
-            </div>
-          </div>
-          <div
-            class="bg-white p-4 rounded-3xl shadow-sm hover:shadow-xl transition"
-          >
-            <img
-              src="assets/img/dr_amel.png"
-              alt="Dokter"
-              class="w-full h-64 object-cover rounded-2xl mb-4"
-            />
-            <h5 class="text-lg font-bold text-gray-900">
-              dr. Amelia Abdullah, Sp.OG
-            </h5>
-            <p class="text-pink-500 text-sm font-semibold">
-              Spesialis Kebidanan & Kandungan
-            </p>
-            <div
-              class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500"
-            >
-              <span
-                ><i class="far fa-calendar-alt mr-1"></i> Sel, Kam, Sab</span
-              >
-              <span class="bg-green-100 text-green-700 px-2 py-1 rounded"
-                >Tersedia</span
-              >
-            </div>
-          </div>
+
+          <?php 
+              }
+          } else {
+              echo '<div class="col-span-3 text-center text-gray-500 py-10">Belum ada data jadwal dokter yang tersedia.</div>';
+          }
+          ?>
         </div>
       </div>
     </section>
 
-     <section id="feedback" class="py-20 bg-white">
+    <section id="feedback" class="py-20 bg-white">
       <div class="container mx-auto px-6">
         <div
           class="bg-white rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row border border-pink-100"
