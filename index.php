@@ -227,7 +227,7 @@ $conn->close();
           >
         </div>
         <button
-          class="bg-pink-600 text-white px-5 py-2 rounded-full text-sm font-bold shadow-md hover:bg-pink-700"
+          class="bg-pink-600 text-white px-5 py-2 rounded-full text-sm font-bold shadow-md hover:bg-pink-700 hidden"
         >
           Pendaftaran Online
         </button>
