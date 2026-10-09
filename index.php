@@ -455,7 +455,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_daftar"])) {
                   <img
                     src="<?= htmlspecialchars($row['foto']); ?>"
                     alt="<?= htmlspecialchars($row['nama_dokter']); ?>"
-                    class="w-full h-64 object-cover rounded-2xl bg-gray-100"
+                    class="w-full h-64 object-cover object-top rounded-2xl bg-gray-100"
                     onerror="this.src='assets/img/default-doctor.png'"
                   />
                   <span class="absolute top-3 right-3 <?= $badge_color; ?> text-white text-xs px-3 py-1 rounded-full font-bold shadow">
