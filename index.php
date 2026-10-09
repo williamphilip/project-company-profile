@@ -1,8 +1,8 @@
 <?php
 // Koneksi ke database
 $host = "localhost";
-$user = "root"; // sesuaikan username database Anda
-$pass = "root";     // sesuaikan password database Anda
+$user = "root"; 
+$pass = "root";     
 $db   = "rsia_paramount";
 
 $conn = new mysqli($host, $user, $pass, $db);
@@ -11,65 +11,71 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-// cek apakah tombol submit_daftar sudah ditekan (dengan asumsi user sudah mengisi formnya) HANYA JALAN JIKA TOMBOL 'submit' DIKLIK
-if (isset($_POST["submit_daftar"])) {
-  $nama_dokter = $_POST['nama_dokter'];
-  $nama_pasien = $_POST['nama_pasien'];
-  $nomor_wa = $_POST['nomor_wa'];
+// Inisialisasi variabel notifikasi SweetAlert agar tidak error saat halaman pertama kali dibuka
+$sweet_alert_script = "";
 
-  // Penanganan Error Tanggal (Kunci agar tidak error lagi)
-  // Jika user tidak isi tanggal, gunakan tanggal hari ini
-  $tanggal_kunjungan = !empty($_POST['tanggal_kunjungan']) ? $_POST['tanggal_kunjungan'] : date('Y-m-d');
+// Cek apakah tombol konfirmasi pendaftaran ditekan
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_daftar"])) {
+    $nama_dokter       = trim($_POST['nama_dokter']);
+    $nama_pasien       = trim($_POST['nama_pasien']);
+    $nomor_wa          = trim($_POST['nomor_wa']);
+    $tanggal_kunjungan = !empty($_POST['tanggal_kunjungan']) ? $_POST['tanggal_kunjungan'] : date('Y-m-d');
+
+    // Validasi sederhana
+    if (empty($nama_dokter) || empty($nama_pasien)) {
+        $sweet_alert_script = "
+            <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        title: 'Peringatan!',
+                        text: 'Nama dokter dan nama pasien wajib diisi.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                });
+            </script>";
+    } else {
+        // Query Insert ke database pendaftaran_online
+        $sql = "INSERT INTO pendaftaran_online (nama_dokter, nama_pasien, tanggal_kunjungan, nomor_wa) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssss", $nama_dokter, $nama_pasien, $tanggal_kunjungan, $nomor_wa);
+
+        if ($stmt->execute()) {
+            $sweet_alert_script = "
+                <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: 'Pendaftaran pasien atas nama " . htmlspecialchars($nama_pasien) . " telah tersimpan.',
+                            icon: 'success',
+                            confirmButtonText: 'Mantap!',
+                            confirmButtonColor: '#db2777'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = 'index.php';
+                            }
+                        });
+                    });
+                </script>";
+        } else {
+            $sweet_alert_script = "
+                <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            title: 'Waduh!',
+                            text: 'Terjadi kesalahan sistem.',
+                            icon: 'error',
+                            confirmButtonText: 'Coba Lagi'
+                        });
+                    });
+                </script>";
+        }
+        $stmt->close();
+    }
 }
-
-
-// Query Insert (ID tidak perlu dimasukkan karena otomatis)
-$sql = "INSERT INTO pendaftaran_online (nama_dokter, nama_pasien, tanggal_kunjungan, nomor_wa) VALUES (?, ?, ?, ?)";
-
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("ssss", $nama_dokter, $nama_pasien, $tanggal_kunjungan, $nomor_wa);
-
-if ($stmt->execute()) {
-    echo "
-    <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                title: 'Berhasil!',
-                text: 'Pendaftaran pasien atas nama $nama_pasien telah tersimpan.',
-                icon: 'success',
-                confirmButtonText: 'Mantap!',
-                confirmButtonColor: '#3085d6',
-                background: '#ffffff',
-                showClass: {
-                    popup: 'animate__animated animate__fadeInDown'
-                },
-                hideClass: {
-                    popup: 'animate__animated animate__fadeOutUp'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'index.php'; // Arahkan kembali ke halaman utama
-                }
-            });
-        });
-    </script>";
-} else {
-    echo "
-    <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                title: 'Waduh!',
-                text: 'Terjadi kesalahan: " . $stmt->error . "',
-                icon: 'error',
-                confirmButtonText: 'Coba Lagi'
-            });
-        });
-    </script>";
-  $stmt->close();
-}
-$conn->close();
 ?>
 
 <!doctype html>
