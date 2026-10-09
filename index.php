@@ -426,7 +426,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit_daftar"])) {
             </p>
           </div>
           <a
-            href="#bookingModal" onclick="openModal()"
+            href="semua_dokter.php"
             class="text-pink-600 font-bold hover:underline mt-4 md:mt-0 flex items-center"
             >Lihat Dokter Selengkapnya <i class="fas fa-arrow-right ml-2"></i
           ></a>
